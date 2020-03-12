@@ -8,8 +8,8 @@ begin
   u    = f->uwnd(:,0,:,:)
   v    = f->vwnd(:,0,:,:)
 
-  printVarSummary(u)                              ; variable overview
-  printVarSummary(v)
+  ; printVarSummary(u)                              ; variable overview
+  ; printVarSummary(v)
 
   data = new((/41,73,144,2/), typeof(u))
 
@@ -30,14 +30,18 @@ begin
   eof_ts   = eofunc_ts_n_Wrap(data, eof, optETS, 0)
   eof_ts_std = dim_standardize_n( eof_ts, 0, 1)      ; normalize
 
-  printVarSummary(eof )                         ; examine EOF variables
-  printVarSummary(eof_ts)
-  printVarSummary(eof_ts_std)
+  ; printVarSummary(eof )                         ; examine EOF variables
+  ; printVarSummary(eof_ts)
+  ; printVarSummary(eof_ts_std)
 
-  a=addfile ("eof.nc", "c")
-  a->EOF=eof      ;EOF Spatial Pattern
-  b=addfile ("eof_ts.nc", "c")
+  a=addfile("eof_u.nc", "c")
+  a->EOF=eof(:,:,:,0)      ;EOF Spatial Pattern
+  a1=addfile("eof_v.nc", "c")
+  a1->EOF=eof(:,:,:,1)      ;EOF Spatial Pattern
+
+  b=addfile("eof_ts.nc", "c")
   b->EOFTS=eof_ts   ;EOF amplitude timeseries
-  c=addfile ("eof_ts_std.nc", "c")
+
+  c=addfile("eof_ts_std.nc", "c")
   c->EOFTSSTD=eof_ts_std ;EOF amplitude timeseries
 end
