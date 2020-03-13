@@ -8,10 +8,8 @@ begin
   u    = f->uwnd(:,0,:,:)
   v    = f->vwnd(:,0,:,:)
 
-  ; printVarSummary(u)                              ; variable overview
-  ; printVarSummary(v)
-
-  data = new((/41,73,144,2/), typeof(u))
+  dims = dimsizes(u)
+  data = new((/dims(0),dims(1),dims(2),2/), typeof(u))
 
   data!0 = "time"
   data!1 = "lat"
@@ -30,7 +28,7 @@ begin
   eof_ts   = eofunc_ts_n_Wrap(data, eof, optETS, 0)
   eof_ts_std = dim_standardize_n( eof_ts, 0, 1)      ; normalize
 
-  ; printVarSummary(eof )                         ; examine EOF variables
+  ; printVarSummary(eof)                         ; examine EOF variables
   ; printVarSummary(eof_ts)
   ; printVarSummary(eof_ts_std)
 

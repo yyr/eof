@@ -8,10 +8,8 @@ begin
   u    = f->uwnd(:,0,:,:)
   v    = f->vwnd(:,0,:,:)
 
-  ; printVarSummary(u)                              ; variable overview
-  ; printVarSummary(v)
-
-  data = new((/41,146,144/), typeof(u))
+  dims = dimsizes(u)
+  data = new((/dims(0),dims(1)*2,dims(2)/), typeof(u))
 
   data!0 = "time"
   data!1 = "lat"
@@ -21,22 +19,21 @@ begin
   ; data&lat = u&lat         ; is also =v&lat
   data&lon = u&lon        ; is also =v&lon
 
-  data(time|:,lat|0:72,lon|:) = u(time|:,lat|:,lon|:)
-  data(time|:,lat|73:145,lon|:) = v(time|:,lat|:,lon|:)
+  vl = dims(1)
+  vu = dims(1)*2 -1
+
+  data(:,0:vl-1,:) = u
+  data(:,vl:vu,:) = v
 
   eof      = eofunc_n_Wrap(data, neof, optEOF, 0)
   eof_ts   = eofunc_ts_n_Wrap(data, eof, optETS, 0)
   eof_ts_std = dim_standardize_n(eof_ts, 0, 1)      ; normalize
 
-  ; printVarSummary(eof )                         ; examine EOF variables
-  ; printVarSummary(eof_ts)
-  ; printVarSummary(eof_ts_std)
-
   a=addfile("eof2_u.nc", "c")
-  a->EOF=eof(:,0:72,:)      ;EOF Spatial Pattern
+  a->EOF=eof(:,0:vl-1,:)      ;EOF Spatial Pattern
 
   a1=addfile("eof2_v.nc", "c")
-  a1->EOF=eof(:,73:145,:)      ;EOF Spatial Pattern
+  a1->EOF=eof(:,vl:vu,:)      ;EOF Spatial Pattern
 
   b=addfile("eof2_ts.nc", "c")
   b->EOFTS=eof_ts   ;EOF amplitude timeseries
